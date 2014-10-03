@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  username: <%= ENV['USER'] %>
+  encoding: utf8
+  min_messages: warning
+  pool: 2
+  timeout: 5000
+
+development:
+  <<: *default
+  database: dce_lti_dummy_development
+
+test:
+  <<: *default
+  database: dce_lti_dummy_test
+
+production:
+  <<: *default
+  database: dce_lti_dummy_production
