@@ -1,3 +1,20 @@
-= DceLti
+# DceLti
 
-This project rocks and uses MIT-LICENSE.
+DceLti simplifies LTI authentication and configuration via the instructure
+IMS::LTI gem.
+
+## Getting started
+
+TBD
+
+## Contributors
+
+* Dan Collis-Puro - @djcp
+
+## License
+
+This project is licensed under the same terms as Rails itself.
+
+## Copyright
+
+2014 President and Fellows of Harvard College
