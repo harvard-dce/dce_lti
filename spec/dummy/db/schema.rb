@@ -11,10 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141003180140) do
+ActiveRecord::Schema.define(version: 20141008172001) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "dce_lti_nonces", force: true do |t|
+    t.string   "nonce"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "dce_lti_nonces", ["nonce"], name: "index_dce_lti_nonces_on_nonce", unique: true, using: :btree
 
   create_table "dce_lti_users", force: true do |t|
     t.string   "lti_user_id"

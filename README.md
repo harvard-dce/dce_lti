@@ -1,7 +1,12 @@
-# DceLti
+# DceLti - LTI Authentication for Rails apps
 
-The DceLti engine simplifies LTI authentication and configuration via the
-IMS::LTI gem.
+The DceLti engine simplifies integrating LTI authentication for Rails apps via
+the [IMS::LTI gem](https://github.com/instructure/ims-lti).
+
+## Prerequisites
+
+* A postgres database
+* Rails > 4.1.x
 
 ## Getting started
 
@@ -15,23 +20,13 @@ Install it and run migrations:
     rake dce_lti:install
     rake db:migrate
 
-See the generated `config/initializers/lti_configs.rb` file for the relevant
-environment variables used to configure this engine.  This also installs a
-config file that removes `X-Frame-Options` by default to allow this application
-to be embedded in an `iframe`.
-
 Mount the engine in 'config/routes.rb'
 
     mount DceLti::Engine => "/lti"
 
-Include the authentication helper methods in your controllers:
-
-    class ApplicationController < ActionController::Base
-      include DceLti::ControllerMethods
-    end
-
-You can now use the `authenticate_via_lti` before_filter to ensure you have a
-valid LTI-provided user in `current_user`, thusly:
+Once mounted, you can use the engine-provided methods `authenticate_via_lti`
+and `current_user`. Use `authenticate_via_lti` as a `before_filter` to ensure
+you have a valid LTI-provided user in `current_user`, thusly:
 
     class VideosController < ApplicationController
       before_filter :authenticate_via_lti
@@ -41,43 +36,81 @@ valid LTI-provided user in `current_user`, thusly:
       end
     end
 
-The default rails `session` hash will also contain `:resource_link_id`,
-`:resource_link_title` and `:context_id` values extracted from the LTI
-information for authenticated routes.
-
-By default, a successful launch will be redirected to your application's
-`root_path`. See below about customizing `redirect_after_successful_auth` if you
-want to change this behavior or don't have a `root_path` defined.
-
-If an LTI session cannot be validated, `dce_lti/sessions/invalid` will be
-rendered. You can customize this output by creating a file named
-`app/views/dce_lti/sessions/invalid.html.erb`, per the normal engine view
-resolution behavior.
-
 ## Configuration
 
-The generated config file should look something like:
+Most basic attributes are configured via ENV. See the generated
+`config/initializers/dce_lti_config.rb` file.
 
-    Rails.application.config.lti_provider_configs = {
-      title: (ENV['LTI_PROVIDER_TITLE'] || 'DCE LTI Provider'),
-      description: (ENV['LTI_PROVIDER_DESCRIPTION'] || 'A description of this'),
-      icon_url: (ENV['LTI_PROVIDER_ICON_URL'] || '//example.com/icon.png'),
-      tool_id: (ENV['LTI_PROVIDER_TOOL_ID'] || '1234567890'),
-      consumer_secret: (ENV['LTI_CONSUMER_SECRET'] || 'consumer_secret'),
-      redirect_after_successful_auth: ->{ Rails.application.routes.url_helpers.root_path },
+We also install a config file that removes `X-Frame-Options` by default to
+allow your application to be embedded in an `iframe`. Feel free to edit this
+file if you'd like to lock down `iframe` policies.
+
+The generated config file should look something like (commented defaults
+omitted):
+
+    DceLti::Engine.setup do |lti|
+      lti.consumer_secret = (ENV['LTI_CONSUMER_SECRET'] || 'consumer_secret')
+      lti.consumer_key = (ENV['LTI_CONSUMER_KEY'] || 'consumer_key')
+    end
+
+If you're building an LTI app that will only ever provide a tool to one
+consumer, then getting the key and secret from ENV is OK. However, in all
+likelihood you'll want to have your tool work for any approved consumer and
+will need something more flexible.
+
+With that in mind, `consumer_key` and `consumer_secret` can be lambdas and
+receive the `launch_params` as sent by the consumer. These launch parameters
+include the `consumer_key` and other attributes to help you identify a consumer
+uniquely - most likely `context_id` or `tool_consumer_instance_guid`. Example:
+
+    DceLti::Engine.setup do |lti|
+      lti.consumer_secret = ->(launch_params) {
+        Consumer.find_by(context_id: launch_params[:context_id]).consumer_secret
+      }
+      lti.consumer_key = ->(launch_params) {
+        Consumer.find_by(context_id: launch_params[:context_id]).consumer_key
+      }
     }
+
+## Notes
 
 The `DceLti` provided controllers inherit from `ApplicationController` as
 defined in your application.
 
-`redirect_after_successful_auth` is evaluated in engine controller context, so
-you should have access to `current_user`, rails route helpers and other
-controller-specific context.  You should be sure to create a `root_path` route.
+### Consumer context info
 
-You can also customize `launch_url`, which is POSTed to by the tool consumer
-and expected to verify the LTI oauth2 signatures. Generally you wouldn't do
-this, as you'd be left to implement signature validation and other messy
-LTI-specific bits.
+For successful launches, the controller `session` hash will contain:
+
+* `:context_id`
+* `:context_label`
+* `:context_title`
+* `:resource_link_id`
+* `:resource_link_title`
+* `:tool_consumer_instance_guid`
+
+These values come from the LTI values posted by the consumer.
+
+### After a successful launch
+
+By default, a successful launch will redirect to your application's
+`root_path`. This is configured via `redirect_after_successful_auth` which is
+evaluated in engine controller context. This method should have access to
+`current_user`, rails route helpers and other controller-specific context.
+
+### Invalid LTI Sessions
+
+If an LTI session cannot be validated, `dce_lti/sessions/invalid` will be
+rendered. You can customize this output by creating a file named
+`app/views/dce_lti/sessions/invalid.html.erb`, per the default engine view
+resolution behavior.
+
+### Nonce cleanup
+
+You can clean up lti-related
+[nonces](http://en.wikipedia.org/wiki/Cryptographic_nonce) via the
+engine-provided `dce_lti:clean_nonces` rake task, which'll remove nonces older
+than 6 hours. You should probably run this in a cron job every hour or so. You
+can also just invoke `DceLti::Nonce.clean` on your own.
 
 ## Contributors
 
