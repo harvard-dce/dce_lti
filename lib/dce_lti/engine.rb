@@ -6,12 +6,11 @@ module DceLti
     def self.setup
       config.provider_title = (ENV['LTI_PROVIDER_TITLE'] || 'DCE LTI Provider')
       config.provider_description = (ENV['LTI_PROVIDER_DESCRIPTION'] || 'A description of this')
-      config.provider_icon_url =  (ENV['LTI_PROVIDER_ICON_URL'] || '//example.com/icon.png')
-      config.provider_tool_id = (ENV['LTI_PROVIDER_TOOL_ID'] || '1234567890')
 
-      config.redirect_after_successful_auth = -> {
+      config.redirect_after_successful_auth = -> do
         Rails.application.routes.url_helpers.root_path
-      }
+      end
+      config.tool_config_extensions = ->(*) {}
       yield config
     end
 

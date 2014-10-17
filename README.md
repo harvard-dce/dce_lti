@@ -38,25 +38,35 @@ you have a valid LTI-provided user in `current_user`, thusly:
 
 ## Configuration
 
-Most basic attributes are configured via ENV. See the generated
-`config/initializers/dce_lti_config.rb` file.
-
-We also install a config file that removes `X-Frame-Options` by default to
-allow your application to be embedded in an `iframe`. Feel free to edit this
-file if you'd like to lock down `iframe` policies.
-
-The generated config file should look something like (commented defaults
-omitted):
+The generated config looks something like (commented defaults omitted):
 
     DceLti::Engine.setup do |lti|
       lti.consumer_secret = (ENV['LTI_CONSUMER_SECRET'] || 'consumer_secret')
       lti.consumer_key = (ENV['LTI_CONSUMER_KEY'] || 'consumer_key')
+      lti.tool_config_extensions = ->(controller, tool_config) do
+        tool_config.extend ::IMS::LTI::Extensions::Canvas::ToolConfig
+        tool_config.canvas_domain!(controller.request.host)
+        tool_config.canvas_privacy_public!
+      end
     end
+
+### Basic attributes
+
+Most basic attributes are configured via ENV. See the generated
+`config/initializers/dce_lti_config.rb` file.
+
+### X-Frame Options
+
+We install a config file that removes `X-Frame-Options` by default to allow
+your application to be embedded in an `iframe`. Feel free to edit this file if
+you'd like to lock down `iframe` policies.
+
+### Consumer key and secret configuration
 
 If you're building an LTI app that will only ever provide a tool to one
 consumer, then getting the key and secret from ENV is OK. However, in all
-likelihood you'll want to have your tool work for any approved consumer and
-will need something more flexible.
+likelihood you'll want your tool to work for any approved consumer and will
+need something more flexible.
 
 With that in mind, `consumer_key` and `consumer_secret` can be lambdas and
 receive the `launch_params` as sent by the consumer. These launch parameters
@@ -71,6 +81,25 @@ uniquely - most likely `context_id` or `tool_consumer_instance_guid`. Example:
         Consumer.find_by(context_id: launch_params[:context_id]).consumer_key
       }
     }
+
+### Customizing the Tool Provider XML configuration
+
+The tool config instance (provided by
+[IMS::LTI::ToolConfig](https://github.com/instructure/ims-lti/blob/master/lib/ims/lti/tool_config.rb))
+can be configured directly via the `tool_config_extensions` lambda. This allows
+you to set LMS-specific config extensions. A common example for the Canvas LMS
+is created by default in the generated configs.
+
+The `tool_config_extensions` lambda runs before the xml is generated and gets
+two parameters:
+
+* controller - An instance of DceLti::ConfigsController
+* tool_config - An instance of IMS::LTI::ToolConfig
+
+See
+[IMS::LTI::Extensions::Canvas::ToolConfig](https://github.com/instructure/ims-lti/blob/master/lib/ims/lti/extensions/canvas.rb)
+and other classes/modules under the IMS::LTI::Extensions hierarchy for further
+options.
 
 ## Notes
 

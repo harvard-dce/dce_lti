@@ -5,8 +5,6 @@ DceLti::Engine.setup do |lti|
   #
   # lti.provider_title = (ENV['LTI_PROVIDER_TITLE'] || 'DCE LTI Provider')
   # lti.provider_description = (ENV['LTI_PROVIDER_DESCRIPTION'] || 'A description of this')
-  # lti.provider_icon_url =  (ENV['LTI_PROVIDER_ICON_URL'] || '//example.com/icon.png')
-  # lti.provider_tool_id = (ENV['LTI_PROVIDER_TOOL_ID'] || '1234567890')
   # lti.redirect_after_successful_auth = ->{ Rails.application.routes.url_helpers.root_path }
 
   lti.consumer_secret = (ENV['LTI_CONSUMER_SECRET'] || 'consumer_secret')
@@ -22,4 +20,21 @@ DceLti::Engine.setup do |lti|
   # lti.consumer_key = ->(launch_params) {
   #   Consumer.find_by(context_id: launch_params[:context_id]).consumer_key
   # }
+
+  # The tool_config_extensions lambda runs before the XML Tool Provider config
+  # is generated and gets two parameters:
+  #
+  # * controller - An instance of DceLti::ConfigsController
+  # * tool_config - An instance of IMS::LTI::ToolConfig
+  #
+  # It allows you to config LMS-specific extensions. A common example for the
+  # Canvas LMS is included below, see 
+  # https://github.com/instructure/ims-lti/blob/master/lib/ims/lti/extensions/canvas.rb
+  # for more canvas-specific configuration options.
+
+  lti.tool_config_extensions = ->(controller, tool_config) do
+    tool_config.extend ::IMS::LTI::Extensions::Canvas::ToolConfig
+    tool_config.canvas_domain!(controller.request.host)
+    tool_config.canvas_privacy_public!
+  end
 end

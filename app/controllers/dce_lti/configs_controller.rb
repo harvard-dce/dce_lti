@@ -4,16 +4,17 @@ module DceLti
     respond_to :xml
 
     def index
-      configurer = Configurer.new(
-        domain: request.host,
+      tool_config = ::IMS::LTI::ToolConfig.new(
         launch_url: sessions_url,
         title: engine_config.provider_title,
         description: engine_config.provider_description,
-        icon_url: engine_config.provider_icon_url,
-        tool_id: engine_config.provider_tool_id,
       )
 
-      respond_with configurer
+      if engine_config.respond_to?(:tool_config_extensions)
+        engine_config.tool_config_extensions.call(self, tool_config)
+      end
+
+      respond_with tool_config
     end
 
     private

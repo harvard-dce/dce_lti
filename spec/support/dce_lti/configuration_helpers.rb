@@ -30,8 +30,6 @@ module DceLti
       {
         provider_title: 'An awesome title',
         provider_description: 'A cool description',
-        provider_icon_url: 'http://www.example.com/icon.png',
-        provider_tool_id: '123123123'
       }
     end
   end
