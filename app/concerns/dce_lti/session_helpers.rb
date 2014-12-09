@@ -7,6 +7,7 @@ context_title
 resource_link_id
 resource_link_title
 tool_consumer_instance_guid
+launch_presentation_return_url
     |
 
     def valid_lti_request?(request)
