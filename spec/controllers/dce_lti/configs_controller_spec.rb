@@ -33,13 +33,15 @@ module DceLti
       end
 
       it 'evaluates custom lambdas with controller context correctly' do
+        allow(controller).to receive(:awesome_method)
+
         tool_config_extensions = ->(controller, tool_config) {
           tool_config.extend ::IMS::LTI::Extensions::Canvas::ToolConfig
-          tool_config.canvas_domain!(controller.request.host)
+          tool_config.canvas_domain!(controller.awesome_method)
         }
         with_overridden_lti_config_of({tool_config_extensions: tool_config_extensions}) do
           get :index, { format: :xml, use_route: :dce_lti }
-          expect(response.body).to include 'test.host'
+          expect(controller).to have_received(:awesome_method)
         end
       end
 
