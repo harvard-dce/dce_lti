@@ -55,6 +55,10 @@ The generated config looks something like (commented defaults omitted):
 Most basic attributes are configured via ENV. See the generated
 `config/initializers/dce_lti_config.rb` file.
 
+`lti.copy_launch_attributes_to_session` is an array of symbols that allows you
+to define attributes to copy to the rails session from the tool provider after
+a successful launch. See `config/initializers/dce_lti_config.rb` for more info.
+
 ### X-Frame Options
 
 We install a config file that removes `X-Frame-Options` by default to allow

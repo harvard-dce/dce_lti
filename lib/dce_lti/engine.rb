@@ -4,6 +4,16 @@ require 'pg'
 module DceLti
   class Engine < ::Rails::Engine
     def self.setup
+      config.copy_launch_attributes_to_session = %i|
+context_id
+context_label
+context_title
+resource_link_id
+resource_link_title
+tool_consumer_instance_guid
+launch_presentation_return_url
+    |
+
       config.provider_title = (ENV['LTI_PROVIDER_TITLE'] || 'DCE LTI Provider')
       config.provider_description = (ENV['LTI_PROVIDER_DESCRIPTION'] || 'A description of this')
 

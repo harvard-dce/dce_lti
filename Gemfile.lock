@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dce_lti (0.2.0)
+    dce_lti (0.3.0)
       ims-lti (~> 1.1)
       pg (~> 0.17)
       rails (~> 4.1)
@@ -64,7 +64,7 @@ GEM
       railties (>= 3.0.0)
     hike (1.2.3)
     i18n (0.6.11)
-    ims-lti (1.1.4)
+    ims-lti (1.1.6)
       builder
       oauth (~> 0.4.5)
       uuid
@@ -73,7 +73,7 @@ GEM
       addressable (~> 2.3)
     macaddr (1.7.1)
       systemu (~> 2.6.2)
-    mail (2.6.1)
+    mail (2.6.3)
       mime-types (>= 1.16, < 3)
     method_source (0.8.2)
     mime-types (2.3)

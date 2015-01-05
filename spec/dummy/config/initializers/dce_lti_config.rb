@@ -10,6 +10,20 @@ DceLti::Engine.setup do |lti|
   lti.consumer_secret = (ENV['LTI_CONSUMER_SECRET'] || 'consumer_secret')
   lti.consumer_key = (ENV['LTI_CONSUMER_KEY'] || 'consumer_key')
 
+  # `lti.copy_launch_attributes_to_session` is an array of attributes to copy
+  # to the default rails session from the IMS::LTI::ToolProvider instance after
+  # a successful launch. The default attributes are defined in
+  # `DceLti::Engine.setup`, and the possible canvas-lms attributes are defined
+  # in:
+  #
+  # https://github.com/instructure/ims-lti/blob/master/lib/ims/lti/launch_params.rb#L9
+  # https://github.com/instructure/ims-lti/blob/master/lib/ims/lti/tool_provider.rb
+  #
+  # and in the spec as well:
+  # http://www.imsglobal.org/LTI/v1p1p1/ltiIMGv1p1p1.html#_Toc330273026
+  #
+  # lti.copy_launch_attributes_to_session.push(:additional_attribute_to_capture)
+
   # The consumer_secret and consumer_key should be a lambda that will be
   # evaluated in the context of your application. You might use a service
   # object or model proper to find key and secret pairs. Example:

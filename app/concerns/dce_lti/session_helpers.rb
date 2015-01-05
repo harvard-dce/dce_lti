@@ -1,14 +1,5 @@
 module DceLti
   module SessionHelpers
-    ATTRIBUTES_TO_EXTRACT_FOR_SESSION = %i|
-context_id
-context_label
-context_title
-resource_link_id
-resource_link_title
-tool_consumer_instance_guid
-    |
-
     def valid_lti_request?(request)
       tool_provider.valid_request?(request) &&
         Nonce.valid?(tool_provider.oauth_nonce) &&
@@ -47,7 +38,7 @@ tool_consumer_instance_guid
     end
 
     def captured_attributes_from(tool_provider)
-      ATTRIBUTES_TO_EXTRACT_FOR_SESSION.inject({}) do |attributes, att|
+      Engine.config.copy_launch_attributes_to_session.inject({}) do |attributes, att|
         attributes.merge(att => tool_provider.send(att))
       end
     end

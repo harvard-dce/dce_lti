@@ -29,6 +29,20 @@ module DceLti
         expect(Nonce).to have_received(:valid?).with(nonce)
       end
 
+      it 'has configurable captured session attributes' do
+        attributes_to_capture = [:foobar]
+        tool_provider = stub_successful_tool_provider
+
+        with_overridden_lti_config_of(
+          lti_config.merge(copy_launch_attributes_to_session: attributes_to_capture)
+        ) do
+
+          post_to_create_with_params
+
+          expect(tool_provider).to have_received(:foobar)
+        end
+      end
+
       it 'uses a proc for consumer_key and consumer_secret if configured' do
         tool_provider = stub_successful_tool_provider
         consumer_key = 'a key'
