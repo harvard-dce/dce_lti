@@ -147,7 +147,8 @@ can also just invoke `DceLti::Nonce.clean` on your own.
 
 ## Contributors
 
-* Dan Collis-Puro - @djcp
+* Dan Collis-Puro - [djcp](https://github.com/djcp)
+* Rebecca Nesson - [rebeccanesson](https://github.com/rebeccanesson)
 
 ## License
 
