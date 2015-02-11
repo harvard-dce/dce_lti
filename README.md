@@ -128,7 +128,8 @@ These values come from the LTI values posted by the consumer.
 By default, a successful launch will redirect to your application's
 `root_path`. This is configured via `redirect_after_successful_auth` which is
 evaluated in engine controller context. This method should have access to
-`current_user`, rails route helpers and other controller-specific context.
+`current_user`, rails route helpers and other controller-specific context
+through the controller instance passed to it.
 
 ### Invalid LTI Sessions
 

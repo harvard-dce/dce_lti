@@ -124,7 +124,11 @@ module DceLti
       context 'valid LTI requests' do
         it 'redirects to "redirect_after_successful_auth" url when it is a proc' do
           url = '/sessions/create'
-          after_auth_url = ->{ url }
+          allow(controller).to receive(:canary_method)
+          after_auth_url = ->(controller) do
+            controller.canary_method
+            url
+          end
 
           with_overridden_lti_config_of(lti_config.merge(redirect_after_successful_auth: after_auth_url)) do
             tool_provider = stub_successful_tool_provider
@@ -132,6 +136,7 @@ module DceLti
             post_to_create_with_params
 
             expect(request).to redirect_to(url)
+            expect(controller).to have_received(:canary_method)
           end
         end
 

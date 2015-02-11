@@ -5,7 +5,7 @@ DceLti::Engine.setup do |lti|
   #
   # lti.provider_title = (ENV['LTI_PROVIDER_TITLE'] || 'DCE LTI Provider')
   # lti.provider_description = (ENV['LTI_PROVIDER_DESCRIPTION'] || 'A description of this')
-  # lti.redirect_after_successful_auth = ->{ Rails.application.routes.url_helpers.root_path }
+  # lti.redirect_after_successful_auth = ->(controller) { Rails.application.routes.url_helpers.root_path }
 
   lti.consumer_secret = (ENV['LTI_CONSUMER_SECRET'] || 'consumer_secret')
   lti.consumer_key = (ENV['LTI_CONSUMER_KEY'] || 'consumer_key')

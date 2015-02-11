@@ -17,7 +17,7 @@ launch_presentation_return_url
       config.provider_title = (ENV['LTI_PROVIDER_TITLE'] || 'DCE LTI Provider')
       config.provider_description = (ENV['LTI_PROVIDER_DESCRIPTION'] || 'A description of this')
 
-      config.redirect_after_successful_auth = -> do
+      config.redirect_after_successful_auth = -> (controller) do
         Rails.application.routes.url_helpers.root_path
       end
       config.tool_config_extensions = ->(*) {}

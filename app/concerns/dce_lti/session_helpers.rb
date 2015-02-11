@@ -28,7 +28,7 @@ module DceLti
     end
 
     def redirect_after_successful_auth
-      Engine.config.redirect_after_successful_auth.call
+      Engine.config.redirect_after_successful_auth.call(self)
     end
 
     def tool_provider
