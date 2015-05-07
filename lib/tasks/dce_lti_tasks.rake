@@ -31,4 +31,11 @@ engine provides.
   task clean_nonces: :environment do
     DceLti::Nonce.clean
   end
+
+  desc 'Clean up old sessions'
+  task clean_sessions: :environment do
+    older_than = (ENV.fetch('OLDER_THAN_X_DAYS', 7)).to_i
+    session_klass = ActionDispatch::Session::ActiveRecordStore.session_class
+    session_klass.where('updated_at < ?', (Time.now - older_than.days)).delete_all
+  end
 end

@@ -14,5 +14,10 @@ module DceLti
           User.find_by(id: session[:current_user_id])
         end
     end
+
+    def cookieless_session?
+      cookie = env.fetch('HTTP_COOKIE', '')
+      cookie.blank? || cookie.match(/shimmed_cookie/)
+    end
   end
 end

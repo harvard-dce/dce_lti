@@ -5,7 +5,21 @@ DceLti::Engine.setup do |lti|
   #
   # lti.provider_title = (ENV['LTI_PROVIDER_TITLE'] || 'DCE LTI Provider')
   # lti.provider_description = (ENV['LTI_PROVIDER_DESCRIPTION'] || 'A description of this')
-  # lti.redirect_after_successful_auth = ->(controller) { Rails.application.routes.url_helpers.root_path }
+  #
+  # Set this to `true` to enable the form and URL-rewriting behavior that
+  # allows for the creation of cookieless sessions. The default is `false`,
+  # meaning we don't attempt to use cookieless sessions when a cookie cannot be
+  # set - the session just fails.
+  #
+  # lti.enable_cookieless_sessions = false
+  #
+  # The default post-auth redirect includes the session key and session id so
+  # that we can instantiate a successful cookieless session if needed.
+  #
+  # lti.redirect_after_successful_auth = ->(controller) {
+  #   session_key_name = Rails.application.config.session_options[:key]
+  #   Rails.application.routes.url_helpers.root_path(session_key_name => controller.session.id)
+  # }
 
   lti.consumer_secret = (ENV['LTI_CONSUMER_SECRET'] || 'consumer_secret')
   lti.consumer_key = (ENV['LTI_CONSUMER_KEY'] || 'consumer_key')

@@ -10,11 +10,18 @@ the [IMS::LTI gem](https://github.com/instructure/ims-lti).
 
 ## Getting started
 
-Add this engine to your gemfile:
+Add these gems to your gemfile:
 
     gem 'dce_lti'
+    gem 'activerecord-session_store', '~> 0.1.1''
 
-Install it and run migrations:
+Update (or create) `config/initializers/session_store.rb` and ensure it contains:
+
+    Rails.application.config.session_store :active_record_store, key: '_your_app_session', expire_after: 60.minutes
+
+Where `_your_app_session` is your application's session key.
+
+Bundle, install and then run migrations:
 
     bundle
     rake dce_lti:install
@@ -35,6 +42,10 @@ you have a valid LTI-provided user in `current_user`, thusly:
          @post = current_user.posts.where(id: params[:id])
       end
     end
+
+That's it! You'll need to configure to fit your use case, but you've got the
+basics of LTI authentication (including experimental cookieless sessioning, see
+below) working already.
 
 ## Configuration
 
@@ -105,7 +116,7 @@ See
 and other classes/modules under the IMS::LTI::Extensions hierarchy for further
 options.
 
-## Notes
+## Other
 
 The `DceLti` provided controllers inherit from `ApplicationController` as
 defined in your application.
@@ -137,6 +148,95 @@ If an LTI session cannot be validated, `dce_lti/sessions/invalid` will be
 rendered. You can customize this output by creating a file named
 `app/views/dce_lti/sessions/invalid.html.erb`, per the default engine view
 resolution behavior.
+
+### Cookieless Sessions - Experimental
+
+If you're running your LTI app on a domain different than your LMS, it will not
+work in recent Safari browers.  This is because [Safari blocks third party
+cookies set in an iframe by
+default](https://support.apple.com/kb/PH19214?locale=en_US). Mozilla has hinted
+at implementing this default as well, so the days of setting a cookie in an
+iframe and expecting it to work are probably numbered. Thanks, pervasive ad
+networks!
+
+There are a few options:
+
+1. Run your LMS and LTI provider on the same domain. This isn't really doable
+   if you want to provide a tool useful to multiple consumers on multiple domains,
+1. Only provide completely anonymous LTI tools,
+1. Build single page javascript-driven apps,
+1. Ask your users to enable third-party cookies,
+1. Block users when you detect they don't support third-party cookies,
+1. Persist the users session by including it in every link and form.
+
+This engine implements the last option by detecting when a browser doesn't
+accept cookies and then rewriting outgoing URLs and forms to include a session.
+
+This behavior is disabled by default and requires minimal app-level changes:
+
+1. Edit `config/initializers/dce_lti_config.rb`. Uncomment
+   `lti.enable_cookieless_sessions = false` and set it to `true`.
+1. You must use database sessions as provided by `activerecord-session_store`,
+   which we install by default and you should've already configured.
+1. The `redirect_after_successful_auth` path must include the session key and
+   id so we can pick it up if cookies aren't available (this is the default as
+   well).
+
+Please report bugs to github issues, there are bound to be a few.
+
+If a user supports cookies, we do basically nothing. We don't rewrite forms or
+URLs and we use a cookied (and database-backed) session per the usual.
+
+#### How cookieless sessions work
+
+When a request comes in without a cookie but with the session key and ID, then
+the `DceLti::Middleware::CookieShim` middleware "shims" it into the Rack
+environment and the session information is restored by subsequent middleware.
+
+When we detect that a user doesn't accept third-party cookies, we use
+`Rack::Plastic` to rewrite forms and URLs to include the session key and id
+from the `redirect_after_successful_auth` redirect.  This happens in the
+`DceLti::Middleware::CookielessSessions` middleware.
+
+#### Known issues with cookieless sessions
+
+* Even if your app works with cookieless sessions, other cookie sessioned
+  iframe'd apps won't: for instance the youtube javascript iframe API and many
+  other third-party javascript apps.
+* We only rewrite URLs without a protocol and domain ('/posts/1') to match the
+  URLs emitted by rails by default. If you're manually inserting links to your
+  application that include the protocol and domain name
+  ('http://example.com/posts/1'), the middleware doesn't catch it.  This could
+  be fixed to be a bit smarter in the future.
+* You will need to ensure that the session key and id tags along for ajax
+  requests to your LTI application.
+
+#### Database session cleanup
+
+Run the included `dce_lti:clean_sessions` rake task periodically to remove old
+sessions - the default is 7 days, you can modify this with the
+`OLDER_THAN_X_DAYS` environment variable, thusly:
+
+    OLDER_THAN_X_DAYS=14 rake dce_lti:clean_sessions
+
+#### Database session hijacking for cookieless sessions
+
+This is an issue, unfortunately. If a malicious user were able to get ahold of
+a link in another user's LTI session (when that other user is under a
+cookieless session) it'd contain a working session ID and could be exploited.
+
+This can be mitigated several ways:
+
+1. Deliver your LTI application over SSL to protect the transport layer. You
+ pretty much need to do this anyway, so this shouldn't be a big deal.
+1. Expire your sessions by setting the `expire_after` option in
+  `config/initializers/session_store.rb` to a value short enough to not annoy
+  your users.
+
+If you set `expire_after` too short, your users will get annoyed. If you set it
+too long, the sessions will linger and increase the time the session is
+vulnerable. We're looking into other ways of mitigating this as well - PRs
+accepted!
 
 ### Nonce cleanup
 
