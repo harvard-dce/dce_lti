@@ -97,6 +97,15 @@ uniquely - most likely `context_id` or `tool_consumer_instance_guid`. Example:
       }
     }
 
+### p3p headers
+
+On IE11, any security setting "Low" or greater rejects all third party cookies
+without p3p headers.
+
+DceLti includes the [p3p](https://rubygems.org/gems/p3p) middleware by default
+to insert a basic p3p header for you automatically.  You can configure this
+with an initializer, see the p3p docs for examples.
+
 ### Customizing the Tool Provider XML configuration
 
 The tool config instance (provided by

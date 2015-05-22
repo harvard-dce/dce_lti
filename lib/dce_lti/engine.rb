@@ -1,5 +1,6 @@
 require 'ims/lti'
 require 'pg'
+require 'p3p'
 
 module DceLti
   class Engine < ::Rails::Engine
