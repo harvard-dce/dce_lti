@@ -1,4 +1,4 @@
-# DceLti - LTI Authentication for Rails apps
+# DceLti - LTI Authentication for Rails apps [![Build Status](https://secure.travis-ci.org/harvard-dce/dce_lti.png?branch=master)](https://travis-ci.org/harvard-dce/dce_lti) [![Code Climate](https://codeclimate.com/github/harvard-dce/dce_lti/badges/gpa.svg)](https://codeclimate.com/github/harvard-dce/dce_lti)
 
 The DceLti engine simplifies integrating LTI authentication for Rails apps via
 the [IMS::LTI gem](https://github.com/instructure/ims-lti).
@@ -259,6 +259,13 @@ can also just invoke `DceLti::Nonce.clean` on your own.
 
 * Dan Collis-Puro - [djcp](https://github.com/djcp)
 * Rebecca Nesson - [rebeccanesson](https://github.com/rebeccanesson)
+
+## See Also
+
+* [The Instructure ims-lti gem](https://github.com/instructure/ims-lti)
+* [The LTI spec](http://www.imsglobal.org/lti/)
+* [Hola Mundo](https://github.com/harvard-dce/hola_mundo), an application using
+  most of this this gem, inspired by [cs50's hello world](https://x.cs50.net/hello/)
 
 ## License
 

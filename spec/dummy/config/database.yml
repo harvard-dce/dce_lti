@@ -1,6 +1,5 @@
 default: &default
   adapter: postgresql
-  username: <%= ENV['USER'] %>
   encoding: utf8
   min_messages: warning
   pool: 2
