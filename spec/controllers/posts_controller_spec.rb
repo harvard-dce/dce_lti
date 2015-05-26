@@ -13,10 +13,21 @@ describe PostsController do
       allow(DceLti::User).to receive(:find_by).and_return(user)
     end
 
-    it 'is successful' do
-      get :index
+    context 'index' do
+      it 'is successful' do
+        get :index
 
-      expect(response).to be_successful
+        expect(response).to be_successful
+      end
+    end
+
+    context 'redirect_with_response_status' do
+      it 'does not error and uses custom status' do
+        get :redirect_with_response_status
+
+        expect(response).to redirect_to(root_path)
+        expect(response.status).to be 301
+      end
     end
   end
 end

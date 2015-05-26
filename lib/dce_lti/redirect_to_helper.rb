@@ -1,6 +1,6 @@
 module DceLti
   module RedirectToHelper
-    def redirect_to(options)
+    def redirect_to(options, response_status = {})
       session_key_name = Rails.application.config.session_options[:key]
       if request.env.fetch('HTTP_COOKIE', '').match(/shimmed_cookie/) &&
         (::DceLti::Engine.config.enable_cookieless_sessions)
@@ -19,7 +19,7 @@ module DceLti
           end
         end
       end
-      super(options)
+      super(options, response_status)
     end
   end
 end
