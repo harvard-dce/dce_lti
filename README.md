@@ -6,7 +6,7 @@ the [IMS::LTI gem](https://github.com/instructure/ims-lti).
 ## Prerequisites
 
 * A postgres database
-* Rails > 4.1.x
+* Rails >= 4.1.x
 
 ## Getting started
 
