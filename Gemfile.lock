@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dce_lti (0.5.3)
+    dce_lti (0.5.4)
       activerecord-session_store (~> 0.1.1)
       ims-lti (~> 1.1)
       p3p (~> 1.2.0)
@@ -136,7 +136,7 @@ GEM
     shoulda-matchers (2.7.0)
       activesupport (>= 3.0.0)
     slop (3.6.0)
-    sprockets (3.1.0)
+    sprockets (3.2.0)
       rack (~> 1.0)
     sprockets-rails (2.3.1)
       actionpack (>= 3.0)

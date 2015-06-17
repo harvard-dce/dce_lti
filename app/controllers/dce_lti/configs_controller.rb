@@ -1,7 +1,6 @@
 module DceLti
   class ConfigsController < ApplicationController
     skip_before_filter :authenticate_via_lti
-    respond_to :xml
 
     def index
       tool_config = ::IMS::LTI::ToolConfig.new(
@@ -14,7 +13,7 @@ module DceLti
         engine_config.tool_config_extensions.call(self, tool_config)
       end
 
-      respond_with tool_config
+      render xml: tool_config
     end
 
     private
