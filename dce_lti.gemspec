@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'pg', '~> 0.17'
   s.add_dependency 'ims-lti', '~> 1.1'
   s.add_dependency 'rack-plastic', '~> 0.1.3'
-  s.add_dependency 'activerecord-session_store', '~> 1.0.0'
+  s.add_dependency 'activerecord-session_store', '~> 1.0.0.pre'
   s.add_dependency 'p3p', '~> 1.2.0'
 
   s.test_files = Dir['spec/**/*']
