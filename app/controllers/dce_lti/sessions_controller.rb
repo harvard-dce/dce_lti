@@ -16,9 +16,5 @@ module DceLti
         render :invalid
       end
     end
-
-    def invalid
-      byebug
-    end
   end
 end

@@ -1,8 +1,8 @@
 module DceLti
   module ControllerMethods
     def authenticate_via_lti
-      unless current_user
-        redirect_to redirect_after_session_expire
+      if ! current_user
+        redirect_to Engine.routes.url_helpers.invalid_sessions_path
       end
     end
 
@@ -18,12 +18,6 @@ module DceLti
     def cookieless_session?
       cookie = env.fetch('HTTP_COOKIE', '')
       cookie.blank? || cookie.match(/shimmed_cookie/)
-    end
-
-    private
-
-    def redirect_after_session_expire
-      Engine.config.redirect_after_session_expire.call(self)
     end
   end
 end
