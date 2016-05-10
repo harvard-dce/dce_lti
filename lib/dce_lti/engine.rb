@@ -26,7 +26,7 @@ module DceLti
       end
 
       config.redirect_after_session_expire = -> (controller) do
-        Rails.application.routes.url_helpers.invalid_sessions_path
+        Engine.routes.url_helpers.invalid_sessions_path
       end
 
       config.tool_config_extensions = ->(*) {}

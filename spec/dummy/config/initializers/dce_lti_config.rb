@@ -24,7 +24,7 @@ DceLti::Engine.setup do |lti|
   # The default redirect when session is expired, redirects to sessions_invalid_path.
   #
   # lti.redirect_after_session_expire = ->(controller) {
-  #   Rails.application.routes.url_helpers.invalid_sessions_path
+  #   Rails.application.routes.url_helpers.signin_path
   # }
 
   lti.consumer_secret = (ENV['LTI_CONSUMER_SECRET'] || 'consumer_secret')
