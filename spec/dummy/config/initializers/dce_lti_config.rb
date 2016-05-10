@@ -20,6 +20,12 @@ DceLti::Engine.setup do |lti|
   #   session_key_name = Rails.application.config.session_options[:key]
   #   Rails.application.routes.url_helpers.root_path(session_key_name => controller.session.id)
   # }
+  #
+  # The default redirect when session is expired, redirects to sessions_invalid_path.
+  #
+  # lti.redirect_after_session_expire = ->(controller) {
+  #   Rails.application.routes.url_helpers.invalid_sessions_path
+  # }
 
   lti.consumer_secret = (ENV['LTI_CONSUMER_SECRET'] || 'consumer_secret')
   lti.consumer_key = (ENV['LTI_CONSUMER_KEY'] || 'consumer_key')
