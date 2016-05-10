@@ -24,6 +24,10 @@ launch_presentation_return_url
         session_key_name = Rails.application.config.session_options[:key]
         Rails.application.routes.url_helpers.root_path(session_key_name => controller.session.id)
       end
+      
+      config.redirect_after_session_expire = -> (controller) do
+        Engine.routes.url_helpers.invalid_sessions_path
+      end
 
       config.tool_config_extensions = ->(*) {}
       yield config

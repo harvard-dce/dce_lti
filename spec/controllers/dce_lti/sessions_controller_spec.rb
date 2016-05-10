@@ -2,6 +2,8 @@ module DceLti
   describe SessionsController do
     include ConfigurationHelpers
 
+    routes { DceLti::Engine.routes }
+
     context '#create' do
       it 'validates the timestamp' do
         timestamp="a timestamp"
@@ -203,7 +205,7 @@ module DceLti
     end
 
     def post_to_create_with_params(params_to_merge = {})
-      post :create, { use_route: :dce_lti }.merge(params_to_merge)
+      post :create, params_to_merge
     end
 
     def captured_attributes

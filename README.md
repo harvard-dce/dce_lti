@@ -153,10 +153,11 @@ through the controller instance passed to it.
 
 ### Invalid LTI Sessions
 
-If an LTI session cannot be validated, `dce_lti/sessions/invalid` will be
+If an LTI session cannot be validated, by default `dce_lti/sessions/invalid` will be
 rendered. You can customize this output by creating a file named
 `app/views/dce_lti/sessions/invalid.html.erb`, per the default engine view
-resolution behavior.
+resolution behavior. It is also possible to configure your own redirect url via 
+'redirect_after_session_expire' setting in dce_lti_config.
 
 ### Cookieless Sessions - Experimental
 

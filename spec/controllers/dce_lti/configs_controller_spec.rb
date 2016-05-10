@@ -2,11 +2,13 @@ module DceLti
   describe ConfigsController do
     include ConfigurationHelpers
 
+    routes { DceLti::Engine.routes }
+
     context '#index' do
       it 'uses IMS::LTI::ToolConfig to construct the tool config' do
         configurer_double = create_configurer_double
 
-        get :index, { format: :xml, use_route: :dce_lti }
+        get :index, { format: :xml }
 
         expect(configurer_double).to have_received(:to_xml)
       end
@@ -14,7 +16,7 @@ module DceLti
       it 'renders XML' do
         create_configurer_double
 
-        get :index, {format: :xml, use_route: :dce_lti }
+        get :index, {format: :xml }
 
         expect(response.content_type).to eq 'application/xml'
       end
@@ -24,7 +26,7 @@ module DceLti
         allow(controller).to receive(:sessions_url).and_return(sessions_url)
         create_configurer_double
 
-        get :index, {format: :xml, use_route: :dce_lti }
+        get :index, {format: :xml }
 
         expect(IMS::LTI::ToolConfig).to have_received(:new).with(
           hash_including(launch_url: sessions_url)
@@ -40,7 +42,7 @@ module DceLti
           tool_config.canvas_domain!(controller.awesome_method)
         }
         with_overridden_lti_config_of({tool_config_extensions: tool_config_extensions}) do
-          get :index, { format: :xml, use_route: :dce_lti }
+          get :index, { format: :xml}
           expect(controller).to have_received(:awesome_method)
         end
       end
@@ -48,7 +50,7 @@ module DceLti
       it 'passes in the correct variables' do
         with_overridden_lti_config_of({}) do |lti_config|
           create_configurer_double
-          get :index, { format: :xml, use_route: :dce_lti }
+          get :index, { format: :xml}
 
           expect(IMS::LTI::ToolConfig).to have_received(:new).with(
             hash_including(
