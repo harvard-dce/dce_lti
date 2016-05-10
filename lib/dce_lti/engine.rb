@@ -6,13 +6,13 @@ module DceLti
   class Engine < ::Rails::Engine
     def self.setup
       config.copy_launch_attributes_to_session = %i|
-context_id
-context_label
-context_title
-resource_link_id
-resource_link_title
-tool_consumer_instance_guid
-launch_presentation_return_url
+        context_id
+        context_label
+        context_title
+        resource_link_id
+        resource_link_title
+        tool_consumer_instance_guid
+        launch_presentation_return_url
       |
 
       config.enable_cookieless_sessions = false
@@ -23,6 +23,10 @@ launch_presentation_return_url
       config.redirect_after_successful_auth = -> (controller) do
         session_key_name = Rails.application.config.session_options[:key]
         Rails.application.routes.url_helpers.root_path(session_key_name => controller.session.id)
+      end
+
+      config.redirect_after_session_expire = -> (controller) do
+        Engine.routes.url_helpers.invalid_sessions_path
       end
 
       config.tool_config_extensions = ->(*) {}
