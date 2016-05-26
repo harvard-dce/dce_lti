@@ -13,7 +13,7 @@ the [IMS::LTI gem](https://github.com/instructure/ims-lti).
 Add these gems to your gemfile:
 
     gem 'dce_lti'
-    gem 'activerecord-session_store', '~> 0.1.1''
+    gem 'activerecord-session_store', '~> 1.0.0''
 
 Update (or create) `config/initializers/session_store.rb` and ensure it contains:
 
