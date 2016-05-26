@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dce_lti (0.6.0)
+    dce_lti (0.6.1)
       activerecord-session_store (~> 1.0.0)
       ims-lti (~> 1.1)
       p3p (~> 1.2.0)
